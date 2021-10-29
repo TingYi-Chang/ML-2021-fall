@@ -28,14 +28,7 @@ def normalize(x_train, x_test):
     x_all = np.concatenate((x_train, x_test), axis = 0)
     mean = np.mean(x_all, axis = 0)
     std = np.std(x_all, axis = 0)
-
-    index = [0, 1, 3, 4, 5]
-    mean_vec = np.zeros(x_all.shape[1])
-    std_vec = np.ones(x_all.shape[1])
-    mean_vec[index] = mean[index]
-    std_vec[index] = std[index]
-
-    x_all_nor = (x_all - mean_vec) / std_vec
+    x_all_nor = (x_all - mean) / std
 
     x_train_nor = x_all_nor[0:x_train.shape[0]]
     x_test_nor = x_all_nor[x_train.shape[0]:]
@@ -71,7 +64,7 @@ def predict(x_test, mu1, mu2, shared_sigma, N1, N2):
 
 def dump(y_test):
     import csv
-    with open('predict.csv', 'w', newline='') as csvf:
+    with open(sys.argv[1], 'w', newline='') as csvf:
         # 建立 CSV 檔寫入器
         writer = csv.writer(csvf)
         writer.writerow(['id','label'])
@@ -103,10 +96,6 @@ def main():
     y = predict(x_train, mu1, mu2, shared_sigma, N1, N2)
     y = np.around(y)
     result = (y_train == y)
-    print (result.shape)
-    print('Train acc = %f' % (float(result.sum()) / result.shape[1]))
-    print('Train acc = %f' % accuracy(x_train, y_train, N1, N2, mu1, mu2, shared_sigma))
-    
     y_test = predict(x_test, mu1, mu2, shared_sigma, N1, N2)
     
     y_test = np.around(y_test)
